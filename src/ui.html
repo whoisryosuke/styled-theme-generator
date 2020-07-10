@@ -17,16 +17,3 @@
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/thomas-lowry/figma-plugin-ds@master/dist/figma-plugin-ds.css"
 />
-<script>
-  document.getElementById("copy").onclick = () => {
-    parent.postMessage({ pluginMessage: { type: "copy" } }, "*");
-  };
-
-  document.getElementById("generate").onclick = () => {
-    const textbox = document.getElementById("theme");
-    parent.postMessage(
-      { pluginMessage: { type: "generate", theme: textbox.value } },
-      "*"
-    );
-  };
-</script>

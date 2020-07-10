@@ -1,4 +1,4 @@
-import merge from "deepmerge";
+import merge from "./utils/deepmerge";
 
 /**
  * Loops through a nested object to set the last objects param or value
@@ -133,7 +133,7 @@ figma.ui.onmessage = (msg) => {
     let finalColors = {};
     colors.map(({ paints, type, remote, name }) => {
       // @TODO: Parse name from Figma slash `/` to object `.`
-      const colorArray = name.split("/");
+      const colorArray = name.toLowerCase().split("/");
 
       const colorNameReducer = (accumulator, currentValue, index) => {
         if (index == colorArray.length) {
@@ -142,7 +142,7 @@ figma.ui.onmessage = (msg) => {
         console.log("creating param", accumulator, currentValue);
         return walkObject(accumulator, currentValue, true);
       };
-      let colorObject = colorArray.reduce(colorNameReducer, finalColors);
+      let colorObject = colorArray.reduce(colorNameReducer, {});
 
       paints?.forEach((paint) => {
         if (isFigmaLinearGradient(paint)) {
@@ -154,7 +154,7 @@ figma.ui.onmessage = (msg) => {
           const newColor = `rgba(${paint.color.r}, ${paint.color.g}, ${paint.color.b}, ${paint.opacity})`;
           colorObject = walkObject(colorObject, newColor);
         }
-        merge(finalColors, colorObject);
+        finalColors = merge(finalColors, colorObject);
       });
       console.log("final colors", finalColors);
     });
