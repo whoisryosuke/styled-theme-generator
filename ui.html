@@ -1,13 +1,32 @@
-<h2>Rectangle Creator</h2>
-<p>Count: <input id="count" value="5" /></p>
-<button id="create">Create</button>
-<button id="cancel">Cancel</button>
+<div class="pr-xsmall pl-xsmall pt-xxxsmall">
+  <h3>Styled Theme Generator</h3>
+  <div class="section-title">Copy</div>
+  <button id="copy" class="button button--primary">
+    Copy theme to clipboard
+  </button>
+  <div class="section-title">Import</div>
+  <button id="generate" class="button button--secondary">
+    Import styles from theme 👇
+  </button>
+  <div class="label">Theme to import:</div>
+  <div class="input">
+    <textarea id="theme" class="textarea" rows="2"></textarea>
+  </div>
+</div>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/thomas-lowry/figma-plugin-ds@master/dist/figma-plugin-ds.css"
+/>
 <script>
-  document.getElementById("create").onclick = () => {
-    parent.postMessage({ pluginMessage: { type: "create-rectangles" } }, "*");
+  document.getElementById("copy").onclick = () => {
+    parent.postMessage({ pluginMessage: { type: "copy" } }, "*");
   };
 
-  document.getElementById("cancel").onclick = () => {
-    parent.postMessage({ pluginMessage: { type: "cancel" } }, "*");
+  document.getElementById("generate").onclick = () => {
+    const textbox = document.getElementById("theme");
+    parent.postMessage(
+      { pluginMessage: { type: "generate", theme: textbox.value } },
+      "*"
+    );
   };
 </script>

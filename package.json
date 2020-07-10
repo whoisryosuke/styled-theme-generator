@@ -11,5 +11,8 @@
   "devDependencies": {
     "@figma/plugin-typings": "^1.15.0",
     "typescript": "^3.9.5"
+  },
+  "dependencies": {
+    "deepmerge": "^4.2.2"
   }
 }

@@ -1,9 +1,77 @@
-// This plugin will open a modal to prompt the user to enter a number, and
-// it will then create that many rectangles on the screen.
+import merge from "deepmerge";
 
-// This file holds the main code for the plugins. It has access to the *document*.
-// You can access browser APIs in the <script> tag inside "ui.html" which has a
-// full browser environment (see documentation).
+/**
+ * Loops through a nested object to set the last objects param or value
+ *
+ * @param obj
+ * @param newValue
+ * @param isKey
+ */
+function walkObject(obj: object, newValue: string, isKey: boolean = false) {
+  const keys = Object.keys(obj);
+
+  // If it's the top level, create first param
+  if (keys.length === 0) {
+    obj[newValue] = {};
+  }
+
+  // Loop through objects parameters
+  keys.forEach(function (key, i) {
+    // Only do the first for perf reasons
+    if (i === 0) {
+      let value = obj[key];
+
+      // If it's an object, recursively run again
+      const nestedKeys = Object.keys(value);
+      if (typeof value === "object" && nestedKeys.length > 0) {
+        walkObject(value, newValue, isKey);
+      } else {
+        // Set param or value of nested object
+        if (isKey) {
+          console.log("setting the key", value, newValue);
+          obj[key][newValue] = {};
+        } else {
+          console.log("setting the value directly", value, newValue);
+          obj[key] = newValue;
+        }
+      }
+    }
+  });
+
+  return obj;
+}
+
+/**
+ * Describes a Figma paint type retrieved from the Figma API.
+ * @ignore
+ */
+const enum FigmaPaintType {
+  Solid = "SOLID",
+  GradientLinear = "GRADIENT_LINEAR",
+}
+
+type FigmaPaint = SolidPaint | GradientPaint | { type: unknown };
+
+const isFigmaLinearGradient = (paint: FigmaPaint): paint is GradientPaint => {
+  return paint.type === FigmaPaintType.GradientLinear;
+};
+
+const isFigmaSolid = (paint: FigmaPaint): paint is SolidPaint => {
+  return paint.type === FigmaPaintType.Solid;
+};
+/**
+ * Describes a Figma effect type retrieved from the Figma API.
+ * @ignore
+ */
+const enum FigmaEffectType {
+  DropShadow = "DROP_SHADOW",
+}
+
+type FigmaEffect = ShadowEffect | { type: unknown };
+
+const isFigmaDropShadow = (effect: Effect): effect is ShadowEffect => {
+  return effect.type === FigmaEffectType.DropShadow;
+};
 
 // This shows the HTML page in "ui.html".
 figma.showUI(__html__);
@@ -14,7 +82,11 @@ figma.showUI(__html__);
 figma.ui.onmessage = (msg) => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
-  if (msg.type === "create-rectangles") {
+  if (msg.type === "generate") {
+    console.log("the theme", msg.theme);
+    // @TODO: Parse JSON and generate text and color styles
+  }
+  if (msg.type === "copy") {
     // const nodes: SceneNode[] = [];
     // for (let i = 0; i < msg.count; i++) {
     //   const rect = figma.createRectangle();
@@ -25,12 +97,70 @@ figma.ui.onmessage = (msg) => {
     // }
     // figma.currentPage.selection = nodes;
     // figma.viewport.scrollAndZoomIntoView(nodes);
-    console.log(figma.getLocalTextStyles());
 
-    const textStyles = figma;
+    // Get text styles to generate text variants
+    const textStyles = figma.getLocalTextStyles();
+
+    console.log(textStyles);
+
+    const textVariants = textStyles.map(
+      ({
+        name,
+        fontName,
+        fontSize,
+        letterSpacing,
+        lineHeight,
+        textCase,
+        textDecoration,
+      }) => ({
+        name,
+        fontFamily: fontName!.family,
+        fontWeight: fontName.style,
+        fontSize,
+        letterSpacing,
+        lineHeight,
+        textCase,
+        textDecoration,
+      })
+    );
+
+    console.log("textVariants", JSON.stringify(textVariants));
+
+    // Get colors
+    const colors = figma.getLocalPaintStyles();
+    console.log("the colors", colors);
+
+    let finalColors = {};
+    colors.map(({ paints, type, remote, name }) => {
+      // @TODO: Parse name from Figma slash `/` to object `.`
+      const colorArray = name.split("/");
+
+      const colorNameReducer = (accumulator, currentValue, index) => {
+        if (index == colorArray.length) {
+          return walkObject(accumulator, "");
+        }
+        console.log("creating param", accumulator, currentValue);
+        return walkObject(accumulator, currentValue, true);
+      };
+      let colorObject = colorArray.reduce(colorNameReducer, finalColors);
+
+      paints?.forEach((paint) => {
+        if (isFigmaLinearGradient(paint)) {
+          // @TODO: Add to gradient section
+          // @TODO: Maybe do this last and then use color values if possible?
+        }
+        if (isFigmaSolid(paint)) {
+          // Add to colors section
+          const newColor = `rgba(${paint.color.r}, ${paint.color.g}, ${paint.color.b}, ${paint.opacity})`;
+          colorObject = walkObject(colorObject, newColor);
+        }
+        merge(finalColors, colorObject);
+      });
+      console.log("final colors", finalColors);
+    });
   }
 
   // Make sure to close the plugin when you're done. Otherwise the plugin will
   // keep running, which shows the cancel button at the bottom of the screen.
-  figma.closePlugin();
+  // figma.closePlugin();
 };
