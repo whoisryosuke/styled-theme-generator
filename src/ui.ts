@@ -29,7 +29,7 @@ document.getElementById("generate").onclick = () => {
 };
 
 onmessage = (event) => {
-  const textbox = document.getElementById("theme");
+  const textbox = <HTMLTextAreaElement>document.getElementById("theme");
 
   textbox.innerHTML = event.data.pluginMessage;
 
