@@ -86,17 +86,6 @@ figma.ui.onmessage = (msg) => {
     // @TODO: Parse JSON and generate text and color styles
   }
   if (msg.type === "copy") {
-    // const nodes: SceneNode[] = [];
-    // for (let i = 0; i < msg.count; i++) {
-    //   const rect = figma.createRectangle();
-    //   rect.x = i * 150;
-    //   rect.fills = [{type: 'SOLID', color: {r: 1, g: 0.5, b: 0}}];
-    //   figma.currentPage.appendChild(rect);
-    //   nodes.push(rect);
-    // }
-    // figma.currentPage.selection = nodes;
-    // figma.viewport.scrollAndZoomIntoView(nodes);
-
     // Input flags to change parsing
     // e.g. we can change color from RGB to HEX
     const flagColorType: string = "hex";
@@ -104,8 +93,6 @@ figma.ui.onmessage = (msg) => {
 
     // Get text styles to generate text variants
     const textStyles = figma.getLocalTextStyles();
-
-    console.log(textStyles);
 
     // Parse font sizes
     // Create array of font sizes and sort numerically by least to most
@@ -218,7 +205,6 @@ figma.ui.onmessage = (msg) => {
         // Use deep merge to combine current color with all colors
         finalColors = merge(finalColors, colorObject);
       });
-      console.log("final colors", finalColors);
     });
 
     const theme = {
@@ -227,7 +213,6 @@ figma.ui.onmessage = (msg) => {
       text: textVariants,
       colors: finalColors,
     };
-    console.log("theme JSON", theme);
 
     figma.ui.postMessage(JSON.stringify(theme, null, 2));
   }
