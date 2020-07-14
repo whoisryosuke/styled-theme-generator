@@ -5,9 +5,37 @@ document.getElementById("copy").onclick = () => {
 };
 
 document.getElementById("generate").onclick = () => {
+  // Clear errors
+  const errorBox = document.getElementById("msg");
+  errorBox.classList.remove("flex");
+  errorBox.classList.add("hidden");
+
   const textbox = document.getElementById("theme");
-  parent.postMessage(
-    { pluginMessage: { type: "generate", theme: textbox.innerHTML } },
-    "*"
-  );
+
+  // Check if theme is empty before sending
+  if (textbox.innerHTML !== "") {
+    parent.postMessage(
+      { pluginMessage: { type: "generate", theme: textbox.innerHTML } },
+      "*"
+    );
+  } else {
+    const errorBox = document.getElementById("msg");
+    errorBox.classList.remove("hidden");
+    errorBox.classList.add("flex");
+    const errorText = document.getElementById("msg-text");
+    errorText.innerHTML =
+      "No theme found. Please copy your theme inside the text box.";
+  }
+};
+
+onmessage = (event) => {
+  const textbox = document.getElementById("theme");
+
+  textbox.innerHTML = event.data.pluginMessage;
+
+  textbox.select();
+  textbox.setSelectionRange(0, 99999); /*For mobile devices*/
+
+  /* Copy the text inside the text field */
+  document.execCommand("copy");
 };

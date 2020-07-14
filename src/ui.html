@@ -1,14 +1,21 @@
 <div class="pr-xsmall pl-xsmall pt-xxxsmall">
-  <h3>Styled Theme Generator</h3>
+  <h4>Styled Theme Generator</h4>
   <div class="section-title">Copy</div>
   <button id="copy" class="button button--primary">
-    Copy theme to clipboard
+    Generate theme from Figma styles
   </button>
+  <div class="label">
+    Styles will appear below in textbox if clipboard doesn't work
+  </div>
   <div class="section-title">Import</div>
+  <div id="msg" class="hidden row mb-xsmall">
+    <div class="icon icon--warning-large icon--red"></div>
+    <div id="msg-text" class="type type--small ml-xsmall"></div>
+  </div>
   <button id="generate" class="button button--secondary">
-    Import styles from theme 👇
+    Import Figma styles from theme JSON 👇
   </button>
-  <div class="label">Theme to import:</div>
+  <div class="section-title">Theme JSON</div>
   <div class="input">
     <textarea id="theme" class="textarea" rows="2"></textarea>
   </div>
