@@ -1,6 +1,6 @@
 # Styled Theme Generator
 
-Figma plugin for generating or importing CSS in JS themes from Figma color and text styles.
+Figma plugin that generates a CSS in JS theme from your document's text and color styles, or lets you import a theme to generate Figma styles.
 
 ## What does it do?
 
