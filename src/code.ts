@@ -97,6 +97,11 @@ figma.ui.onmessage = (msg) => {
     // figma.currentPage.selection = nodes;
     // figma.viewport.scrollAndZoomIntoView(nodes);
 
+    // Input flags to change parsing
+    // e.g. we can change color from RGB to HEX
+    const flagColorType: string = "hex";
+    const flagLowercaseNames = true;
+
     // Get text styles to generate text variants
     const textStyles = figma.getLocalTextStyles();
 
@@ -128,7 +133,7 @@ figma.ui.onmessage = (msg) => {
       fontSizes.filter((fontSizeValue, index) => {
         if (fontSizeValue === fontSize) fontIndex = index;
       });
-      return fontIndex;
+      return parseInt(fontIndex);
     }
 
     // Parse text variants
@@ -144,9 +149,9 @@ figma.ui.onmessage = (msg) => {
           textDecoration,
         }) => ({
           name,
-          fontFamily: `${fontName!.family}`,
-          fontWeight: `${fontName.style}`,
-          fontSize,
+          fontFamily: `${fontName!.family.toLowerCase()}`,
+          fontWeight: fontName.style,
+          fontSize: getFontSize(fontSize),
           letterSpacing,
           lineHeight,
           textCase,
@@ -157,11 +162,6 @@ figma.ui.onmessage = (msg) => {
         map[obj.name.replace("/", ".").toLowerCase()] = obj;
         return map;
       }, {});
-
-    // Input flags to change parsing
-    // e.g. we can change color from RGB to HEX
-    const flagColorType = "";
-    const flagLowercaseNames = true;
 
     // Get colors
     const colors = figma.getLocalPaintStyles();
@@ -228,6 +228,8 @@ figma.ui.onmessage = (msg) => {
       colors: finalColors,
     };
     console.log("theme JSON", theme);
+
+    figma.ui.postMessage(JSON.stringify(theme, null, 2));
   }
 
   // Make sure to close the plugin when you're done. Otherwise the plugin will
