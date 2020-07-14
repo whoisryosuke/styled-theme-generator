@@ -118,15 +118,24 @@ figma.ui.onmessage = (msg) => {
 
     // Parse font families
     // Create array of font sizes and sort numerically by least to most
-    const fontFamiliesWithDupes = textStyles
+    const fontFamilies = textStyles
       .map(({ fontName }) => fontName!.family)
-      .sort();
-    // Remove dupes
-    const fontFamilies = fontFamiliesWithDupes.filter(
-      (item, index) => fontFamiliesWithDupes.indexOf(item) == index
-    );
+      .sort()
+      .reduce((map, obj) => {
+        map[obj.toLowerCase()] = obj;
+        return map;
+      }, {});
 
     console.log("fontFamilies", JSON.stringify(fontFamilies));
+
+    // Grab index of font size
+    function getFontSize(fontSize) {
+      let fontIndex;
+      fontSizes.filter((fontSizeValue, index) => {
+        if (fontSizeValue === fontSize) fontIndex = index;
+      });
+      return fontIndex;
+    }
 
     // Parse text variants
     const textVariants = textStyles.map(
@@ -140,8 +149,8 @@ figma.ui.onmessage = (msg) => {
         textDecoration,
       }) => ({
         name,
-        fontFamily: fontName!.family,
-        fontWeight: fontName.style,
+        fontFamily: `${fontName!.family}`,
+        fontWeight: `${fontName.style}`,
         fontSize,
         letterSpacing,
         lineHeight,
@@ -167,7 +176,7 @@ figma.ui.onmessage = (msg) => {
     colors.map(({ paints, type, remote, name }) => {
       // Parse name from Figma slash `/` to object `.`
       let filteredName = name;
-      if (flagLowercaseNames) filteredName.toLowerCase();
+      if (flagLowercaseNames) filteredName = filteredName.toLowerCase();
       const colorArray = filteredName.split("/");
 
       const colorNameReducer = (accumulator, currentValue, index) => {
@@ -196,7 +205,17 @@ figma.ui.onmessage = (msg) => {
             case "hex":
               newColor = Color(newColor).toHexString();
               break;
+            case "rgba":
+              newColor = Color(newColor).toRgbString();
+              break;
+            case "hsl":
+              newColor = Color(newColor).toHslString();
+              break;
+            default:
+              newColor = Color(newColor).toHexString();
+              break;
           }
+          // Add to last nested object parameter
           colorObject = walkObject(colorObject, newColor);
         }
 
