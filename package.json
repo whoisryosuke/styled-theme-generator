@@ -25,6 +25,7 @@
   "dependencies": {
     "deepmerge": "^4.2.2",
     "figma-plugin-ds": "^0.1.8",
-    "is-mergeable-object": "^1.1.1"
+    "is-mergeable-object": "^1.1.1",
+    "tinycolor2": "^1.4.1"
   }
 }

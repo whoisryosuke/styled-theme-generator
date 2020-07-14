@@ -1,3 +1,4 @@
+import Color from "tinycolor2";
 import merge from "./utils/deepmerge";
 
 /**
@@ -103,6 +104,31 @@ figma.ui.onmessage = (msg) => {
 
     console.log(textStyles);
 
+    // Parse font sizes
+    // Create array of font sizes and sort numerically by least to most
+    const fontSizesWithDupes = textStyles
+      .map(({ fontSize }) => fontSize)
+      .sort((a, b) => a - b);
+    // Remove dupes
+    const fontSizes = fontSizesWithDupes.filter(
+      (item, index) => fontSizesWithDupes.indexOf(item) == index
+    );
+
+    console.log("fontSizes", JSON.stringify(fontSizes));
+
+    // Parse font families
+    // Create array of font sizes and sort numerically by least to most
+    const fontFamiliesWithDupes = textStyles
+      .map(({ fontName }) => fontName!.family)
+      .sort();
+    // Remove dupes
+    const fontFamilies = fontFamiliesWithDupes.filter(
+      (item, index) => fontFamiliesWithDupes.indexOf(item) == index
+    );
+
+    console.log("fontFamilies", JSON.stringify(fontFamilies));
+
+    // Parse text variants
     const textVariants = textStyles.map(
       ({
         name,
@@ -126,14 +152,23 @@ figma.ui.onmessage = (msg) => {
 
     console.log("textVariants", JSON.stringify(textVariants));
 
+    // Input flags to change parsing
+    // e.g. we can change color from RGB to HEX
+    const flagColorType = "";
+    const flagLowercaseNames = true;
+
     // Get colors
     const colors = figma.getLocalPaintStyles();
-    console.log("the colors", colors);
 
+    // Create container for parsed colors
     let finalColors = {};
+
+    // Loop through colors and convert Figma API to theme/CSS format
     colors.map(({ paints, type, remote, name }) => {
-      // @TODO: Parse name from Figma slash `/` to object `.`
-      const colorArray = name.toLowerCase().split("/");
+      // Parse name from Figma slash `/` to object `.`
+      let filteredName = name;
+      if (flagLowercaseNames) filteredName.toLowerCase();
+      const colorArray = filteredName.split("/");
 
       const colorNameReducer = (accumulator, currentValue, index) => {
         if (index == colorArray.length) {
@@ -144,6 +179,7 @@ figma.ui.onmessage = (msg) => {
       };
       let colorObject = colorArray.reduce(colorNameReducer, {});
 
+      // Parse Figma Paint API to CSS color properties
       paints?.forEach((paint) => {
         if (isFigmaLinearGradient(paint)) {
           // @TODO: Add to gradient section
@@ -151,9 +187,20 @@ figma.ui.onmessage = (msg) => {
         }
         if (isFigmaSolid(paint)) {
           // Add to colors section
-          const newColor = `rgba(${paint.color.r}, ${paint.color.g}, ${paint.color.b}, ${paint.opacity})`;
+          const { r, g, b } = paint.color;
+          let newColor = `rgba (${Math.round(r * 255)}, ${Math.round(
+            g * 255
+          )}, ${Math.round(b * 255)}, ${paint.opacity})`;
+          // Convert optionally to other values
+          switch (flagColorType) {
+            case "hex":
+              newColor = Color(newColor).toHexString();
+              break;
+          }
           colorObject = walkObject(colorObject, newColor);
         }
+
+        // Use deep merge to combine current color with all colors
         finalColors = merge(finalColors, colorObject);
       });
       console.log("final colors", finalColors);
