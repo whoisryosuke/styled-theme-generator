@@ -1,3 +1,4 @@
 node_modules
 src/ui.js
 src/code.js
+dist
