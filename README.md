@@ -1,40 +1,31 @@
-Below are the steps to get your plugin running. You can also find instructions at:
+# Styled Theme Generator
 
-  https://www.figma.com/plugin-docs/setup/
+Figma plugin for generating or importing CSS in JS themes from Figma color and text styles.
 
-This plugin template uses Typescript and NPM, two standard tools in creating JavaScript applications.
+## What does it do?
 
-First, download Node.js which comes with NPM. This will allow you to install TypeScript and other
-libraries. You can find the download link here:
+> **Figma Styles** ♻️ **CSS in JS Theme**
 
-  https://nodejs.org/en/download/
+This plugin can **generate a CSS in JS theme file** (according to the System UI specification) from your Figma document's color and text styles. It parses all the styles and generates a JSON object you can use in your CSS in JS theme file. This way you can take your design to code and remove a layer of translation between designers and developers.
 
-Next, install TypeScript using the command:
+This plugin can **generate Figma styles** from a CSS in JS theme file. It makes it easy to import pre-existing themes from CSS in JS libraries, eliminate the boilerplate of setting up a Figma style guide, and get to prototyping faster.
 
-  npm install -g typescript
+## Development
 
-Finally, in the directory of your plugin, get the latest type definitions for the plugin API by running:
+This project uses Typescript and VSCode's built-in "watch" mode that compiles Typescript files according to the `tsconfig.json`.
 
-  npm install --saveDev @figma/plugin-typings
+> If you're not using VSCode, you will have to run the Typescript build command on watch mode manually.
 
-If you are familiar with JavaScript, TypeScript will look very familiar. In fact, valid JavaScript code
-is already valid Typescript code.
+### Getting Started
 
-TypeScript adds type annotations to variables. This allows code editors such as Visual Studio Code
-to provide information about the Figma API while you are writing code, as well as help catch bugs
-you previously didn't notice.
+1. Install dependencies: `yarn` or `npm i`
+2. In VSCode with the project folder open, press `SHIFT + CMD + B` (or `Control` instead of `CMD` for Windows) and run the `tsc: watch` command from the `tsconfig.json` file.
+3. Open Figma and import the plugin's `manifest.json` file.
 
-For more information, visit https://www.typescriptlang.org/
+To run the plugin, go to the Figma desktop app and find the plugin in the top menu (Plugins > Development > styled-theme-generator).
 
-Using TypeScript requires a compiler to convert TypeScript (code.ts) into JavaScript (code.js)
-for the browser to run.
+### Figma Guide
 
-We recommend writing TypeScript code using Visual Studio code:
+You can find more information about Figma's plugin setup here:
 
-1. Download Visual Studio Code if you haven't already: https://code.visualstudio.com/.
-2. Open this directory in Visual Studio Code.
-3. Compile TypeScript to JavaScript: Run the "Terminal > Run Build Task..." menu item,
-    then select "tsc: watch - tsconfig.json". You will have to do this again every time
-    you reopen Visual Studio Code.
-
-That's it! Visual Studio Code will regenerate the JavaScript file every time you save.
+https://www.figma.com/plugin-docs/setup/
