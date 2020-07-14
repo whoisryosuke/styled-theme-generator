@@ -29,10 +29,8 @@ function walkObject(obj: object, newValue: string, isKey: boolean = false) {
       } else {
         // Set param or value of nested object
         if (isKey) {
-          console.log("setting the key", value, newValue);
           obj[key][newValue] = {};
         } else {
-          console.log("setting the value directly", value, newValue);
           obj[key] = newValue;
         }
       }
@@ -114,8 +112,6 @@ figma.ui.onmessage = (msg) => {
       (item, index) => fontSizesWithDupes.indexOf(item) == index
     );
 
-    console.log("fontSizes", JSON.stringify(fontSizes));
-
     // Parse font families
     // Create array of font sizes and sort numerically by least to most
     const fontFamilies = textStyles
@@ -125,8 +121,6 @@ figma.ui.onmessage = (msg) => {
         map[obj.toLowerCase()] = obj;
         return map;
       }, {});
-
-    console.log("fontFamilies", JSON.stringify(fontFamilies));
 
     // Grab index of font size
     function getFontSize(fontSize) {
@@ -138,28 +132,31 @@ figma.ui.onmessage = (msg) => {
     }
 
     // Parse text variants
-    const textVariants = textStyles.map(
-      ({
-        name,
-        fontName,
-        fontSize,
-        letterSpacing,
-        lineHeight,
-        textCase,
-        textDecoration,
-      }) => ({
-        name,
-        fontFamily: `${fontName!.family}`,
-        fontWeight: `${fontName.style}`,
-        fontSize,
-        letterSpacing,
-        lineHeight,
-        textCase,
-        textDecoration,
-      })
-    );
-
-    console.log("textVariants", JSON.stringify(textVariants));
+    const textVariants = textStyles
+      .map(
+        ({
+          name,
+          fontName,
+          fontSize,
+          letterSpacing,
+          lineHeight,
+          textCase,
+          textDecoration,
+        }) => ({
+          name,
+          fontFamily: `${fontName!.family}`,
+          fontWeight: `${fontName.style}`,
+          fontSize,
+          letterSpacing,
+          lineHeight,
+          textCase,
+          textDecoration,
+        })
+      )
+      .reduce((map, obj) => {
+        map[obj.name.replace("/", ".").toLowerCase()] = obj;
+        return map;
+      }, {});
 
     // Input flags to change parsing
     // e.g. we can change color from RGB to HEX
@@ -183,7 +180,6 @@ figma.ui.onmessage = (msg) => {
         if (index == colorArray.length) {
           return walkObject(accumulator, "");
         }
-        console.log("creating param", accumulator, currentValue);
         return walkObject(accumulator, currentValue, true);
       };
       let colorObject = colorArray.reduce(colorNameReducer, {});
@@ -224,6 +220,14 @@ figma.ui.onmessage = (msg) => {
       });
       console.log("final colors", finalColors);
     });
+
+    const theme = {
+      fontSizes,
+      fonts: fontFamilies,
+      text: textVariants,
+      colors: finalColors,
+    };
+    console.log("theme JSON", theme);
   }
 
   // Make sure to close the plugin when you're done. Otherwise the plugin will
