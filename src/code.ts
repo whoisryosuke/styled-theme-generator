@@ -78,12 +78,90 @@ figma.showUI(__html__);
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
-figma.ui.onmessage = (msg) => {
+figma.ui.onmessage = async (msg) => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
   if (msg.type === "generate") {
-    console.log("the theme", msg.theme);
+    const theme = JSON.parse(msg.theme);
     // @TODO: Parse JSON and generate text and color styles
+    const localTextStyles = figma.getLocalTextStyles();
+
+    // Parse text styles
+    Object.keys(theme.text)?.map(async (name) => {
+      const themeFont = theme.text[name];
+      const localStyle = localTextStyles.find(
+        ({ name: localName }) => localName === name
+      );
+      const textStyle = localStyle || figma.createTextStyle();
+      const fontName = {
+        family: theme.fonts[themeFont.fontFamily],
+        style: themeFont.fontStyle ? themeFont.fontStyle : "Regular",
+      };
+
+      textStyle.name = name;
+      // Load font
+      await figma.loadFontAsync(fontName);
+      textStyle.fontName = fontName;
+      textStyle.fontSize = themeFont.fontSize;
+      textStyle.letterSpacing = themeFont.letterSpacing;
+      textStyle.lineHeight = themeFont.lineHeight;
+      textStyle.textCase = themeFont.textTransform;
+      textStyle.textDecoration = themeFont.textDecoration;
+      console.log("text style", textStyle);
+    });
+
+    const localColorStyles = figma.getLocalPaintStyles();
+
+    function createFigmaColorStyle(themeObject) {
+      console.log("the keys", Object.keys(themeObject));
+      Object.keys(themeObject)?.map((name) => {
+        console.log("processing color", name);
+        const themeColor = themeObject[name];
+
+        // check if has nested colors
+        console.log("checking if is object", themeColor, typeof themeColor);
+        if (typeof themeColor === "object") {
+          const colorKeys = Object.keys(themeColor);
+          return colorKeys.forEach((objProperty) => {
+            const nestedKeys = Object.keys(objProperty);
+            console.log(
+              "checking for nested obj",
+              themeColor,
+              objProperty,
+              nestedKeys
+            );
+            if (typeof objProperty === "object" && nestedKeys?.length > 0)
+              return createFigmaColorStyle(themeColor);
+          });
+        } else {
+          const localStyle = localColorStyles.find(
+            ({ name: localName }) => localName === name
+          );
+          const colorStyle: PaintStyle = localStyle || figma.createPaintStyle();
+          colorStyle.name = name;
+
+          const convertedColor = Color(themeColor).toRgb();
+          const { r, g, b, a } = convertedColor;
+          const color: RGB = {
+            r: Math.round(r / 255),
+            g: Math.round(g / 255),
+            b: Math.round(b / 255),
+          };
+          console.log("color style", colorStyle, themeColor, color);
+
+          const paintStyle: SolidPaint = {
+            type: "SOLID",
+            color,
+            opacity: a,
+          };
+          colorStyle.paints = [paintStyle];
+          console.log("color style generated", themeColor, colorStyle);
+        }
+      });
+    }
+
+    // Parse color styles
+    createFigmaColorStyle(theme.colors);
   }
   if (msg.type === "copy") {
     // Input flags to change parsing
