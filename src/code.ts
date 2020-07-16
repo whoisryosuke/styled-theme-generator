@@ -82,54 +82,53 @@ figma.ui.onmessage = async (msg) => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
   if (msg.type === "generate") {
-    const theme = JSON.parse(msg.theme);
+    let theme;
+    try {
+      theme = JSON.parse(msg.theme);
+    } catch (e) {
+      console.error("JSON parse failed", e);
+    }
     // @TODO: Parse JSON and generate text and color styles
     const localTextStyles = figma.getLocalTextStyles();
 
-    // Parse text styles
-    Object.keys(theme.text)?.map(async (name) => {
-      const themeFont = theme.text[name];
-      const localStyle = localTextStyles.find(
-        ({ name: localName }) => localName === name
-      );
-      const textStyle = localStyle || figma.createTextStyle();
-      const fontName = {
-        family: theme.fonts[themeFont.fontFamily],
-        style: themeFont.fontStyle ? themeFont.fontStyle : "Regular",
-      };
+    // if (!theme) return;
 
-      textStyle.name = name;
-      // Load font
-      await figma.loadFontAsync(fontName);
-      textStyle.fontName = fontName;
-      textStyle.fontSize = themeFont.fontSize;
-      textStyle.letterSpacing = themeFont.letterSpacing;
-      textStyle.lineHeight = themeFont.lineHeight;
-      textStyle.textCase = themeFont.textTransform;
-      textStyle.textDecoration = themeFont.textDecoration;
-      console.log("text style", textStyle);
-    });
+    // Parse text styles
+    if (theme.text) {
+      Object.keys(theme.text)?.map(async (name) => {
+        const themeFont = theme.text[name];
+        const localStyle = localTextStyles.find(
+          ({ name: localName }) => localName === name
+        );
+        const textStyle = localStyle || figma.createTextStyle();
+        const fontName = {
+          family: theme.fonts[themeFont.fontFamily],
+          style: themeFont.fontStyle ? themeFont.fontStyle : "Regular",
+        };
+
+        textStyle.name = name;
+        // Load font
+        await figma.loadFontAsync(fontName);
+        textStyle.fontName = fontName;
+        textStyle.fontSize = themeFont.fontSize;
+        textStyle.letterSpacing = themeFont.letterSpacing;
+        textStyle.lineHeight = themeFont.lineHeight;
+        textStyle.textCase = themeFont.textTransform;
+        textStyle.textDecoration = themeFont.textDecoration;
+      });
+    }
 
     const localColorStyles = figma.getLocalPaintStyles();
 
     function createFigmaColorStyle(themeObject) {
-      console.log("the keys", Object.keys(themeObject));
       Object.keys(themeObject)?.map((name) => {
-        console.log("processing color", name);
         const themeColor = themeObject[name];
 
         // check if has nested colors
-        console.log("checking if is object", themeColor, typeof themeColor);
         if (typeof themeColor === "object") {
           const colorKeys = Object.keys(themeColor);
           return colorKeys.forEach((objProperty) => {
             const nestedKeys = Object.keys(objProperty);
-            console.log(
-              "checking for nested obj",
-              themeColor,
-              objProperty,
-              nestedKeys
-            );
             if (typeof objProperty === "object" && nestedKeys?.length > 0)
               return createFigmaColorStyle(themeColor);
           });
@@ -147,7 +146,6 @@ figma.ui.onmessage = async (msg) => {
             g: Math.round(g / 255),
             b: Math.round(b / 255),
           };
-          console.log("color style", colorStyle, themeColor, color);
 
           const paintStyle: SolidPaint = {
             type: "SOLID",
@@ -155,13 +153,14 @@ figma.ui.onmessage = async (msg) => {
             opacity: a,
           };
           colorStyle.paints = [paintStyle];
-          console.log("color style generated", themeColor, colorStyle);
         }
       });
     }
 
     // Parse color styles
-    createFigmaColorStyle(theme.colors);
+    if (theme.colors) {
+      createFigmaColorStyle(theme.colors);
+    }
   }
   if (msg.type === "copy") {
     // Input flags to change parsing

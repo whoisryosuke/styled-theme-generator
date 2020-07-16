@@ -10,12 +10,12 @@ document.getElementById("generate").onclick = () => {
   errorBox.classList.remove("flex");
   errorBox.classList.add("hidden");
 
-  const textbox = document.getElementById("theme");
+  const textbox = <HTMLTextAreaElement>document.getElementById("theme");
 
   // Check if theme is empty before sending
-  if (textbox.innerHTML !== "") {
+  if (textbox?.value !== "") {
     parent.postMessage(
-      { pluginMessage: { type: "generate", theme: textbox.innerHTML } },
+      { pluginMessage: { type: "generate", theme: textbox.value } },
       "*"
     );
   } else {
@@ -31,7 +31,7 @@ document.getElementById("generate").onclick = () => {
 onmessage = (event) => {
   const textbox = <HTMLTextAreaElement>document.getElementById("theme");
 
-  textbox.innerHTML = event.data.pluginMessage;
+  textbox.value = event.data.pluginMessage;
 
   textbox.select();
   textbox.setSelectionRange(0, 99999); /*For mobile devices*/

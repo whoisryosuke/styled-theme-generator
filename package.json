@@ -12,6 +12,7 @@
   "license": "MIT",
   "devDependencies": {
     "@figma/plugin-typings": "^1.15.0",
+    "@types/tinycolor": "^1.1.27",
     "css-loader": "^3.6.0",
     "html-webpack-inline-source-plugin": "^0.0.10",
     "html-webpack-plugin": "^3.2.0",

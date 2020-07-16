@@ -12,6 +12,11 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.5.tgz#dcce4430e64b443ba8945f0290fb564ad5bac6dd"
   integrity sha512-7+2BITlgjgDhH0vvwZU/HZJVyk+2XUlvxXe8dFMedNX/aMkaOq++rMAFXc0tM7ij15QaWlbdQASBR9dihi+bDQ==
 
+"@types/tinycolor@^1.1.27":
+  version "1.1.27"
+  resolved "https://registry.yarnpkg.com/@types/tinycolor/-/tinycolor-1.1.27.tgz#d01d05a681d0ce28923b021d5f3d752ea0478089"
+  integrity sha1-0B0FpoHQziiSOwIdXz11LqBHgIk=
+
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.9.0.tgz#bd850604b4042459a5a41cd7d338cbed695ed964"
