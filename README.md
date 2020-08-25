@@ -1,6 +1,6 @@
 # Styled Theme Generator
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Figma plugin that generates a CSS in JS theme from your document's text and color styles, or lets you import a theme to generate Figma styles.
@@ -90,6 +90,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://www.linkedin.com/in/max-coplan-136a9a6b/"><img src="https://avatars3.githubusercontent.com/u/5297725?v=4" width="100px;" alt=""/><br /><sub><b>Max Coplan</b></sub></a><br /><a href="https://github.com/whoisryosuke/styled-theme-generator/commits?author=vegerot" title="Code">💻</a> <a href="https://github.com/whoisryosuke/styled-theme-generator/issues?q=author%3Avegerot" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://gavinanthony.com"><img src="https://avatars0.githubusercontent.com/u/392797?v=4" width="100px;" alt=""/><br /><sub><b>Gavin</b></sub></a><br /><a href="https://github.com/whoisryosuke/styled-theme-generator/commits?author=gavinanthony" title="Code">💻</a> <a href="https://github.com/whoisryosuke/styled-theme-generator/issues?q=author%3Agavinanthony" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
