@@ -14,6 +14,16 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "gavinanthony",
+      "name": "Gavin",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/392797?v=4",
+      "profile": "https://gavinanthony.com",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
