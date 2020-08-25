@@ -69,7 +69,11 @@ figma.ui.onmessage = async (msg) => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
   if (msg.type === "generate") {
-    let theme: { text: { [x: string]: any; }; fonts: { [x: string]: any; }; colors: any; };
+    let theme: {
+      text: { [x: string]: any };
+      fonts: { [x: string]: any };
+      colors: any;
+    };
     try {
       theme = JSON.parse(msg.theme);
     } catch (e) {
@@ -107,7 +111,7 @@ figma.ui.onmessage = async (msg) => {
 
     const localColorStyles = figma.getLocalPaintStyles();
 
-    function createFigmaColorStyle(themeObject: { [x: string]: any; }) {
+    function createFigmaColorStyle(themeObject: { [x: string]: any }) {
       Object.keys(themeObject)?.map((name) => {
         const themeColor = themeObject[name];
 
@@ -128,9 +132,9 @@ figma.ui.onmessage = async (msg) => {
 
           const oColor = TinyColor(themeColor);
           if (!oColor.isValid()) {
-            throw new Error('invalid color' + oColor.getOriginalInput())
+            throw new Error("invalid color" + oColor.getOriginalInput());
           }
-          const convertedColor = oColor.toRgb()
+          const convertedColor = oColor.toRgb();
           const { r, g, b, a } = convertedColor;
           const color: RGB = {
             r: r / 255,
@@ -232,7 +236,11 @@ figma.ui.onmessage = async (msg) => {
       if (flagLowercaseNames) filteredName = filteredName.toLowerCase();
       const colorArray = filteredName.split("/");
 
-      const colorNameReducer = (accumulator: object, currentValue: string, index: number) => {
+      const colorNameReducer = (
+        accumulator: object,
+        currentValue: string,
+        index: number
+      ) => {
         if (index == colorArray.length) {
           return walkObject(accumulator, "");
         }
@@ -288,5 +296,5 @@ figma.ui.onmessage = async (msg) => {
 
   // Make sure to close the plugin when you're done. Otherwise the plugin will
   // keep running, which shows the cancel button at the bottom of the screen.
-  // figma.closePlugin();
+  figma.closePlugin();
 };
