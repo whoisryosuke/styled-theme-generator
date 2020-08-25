@@ -1,0 +1,25 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "vegerot",
+      "name": "Max Coplan",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/5297725?v=4",
+      "profile": "https://www.linkedin.com/in/max-coplan-136a9a6b/",
+      "contributions": [
+        "code",
+        "bug"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "styled-theme-generator",
+  "projectOwner": "whoisryosuke",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
