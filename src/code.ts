@@ -1,4 +1,4 @@
-import Color from "tinycolor2";
+import TinyColor from "tinycolor2";
 import merge from "./utils/deepmerge";
 
 /**
@@ -58,19 +58,6 @@ const isFigmaLinearGradient = (paint: FigmaPaint): paint is GradientPaint => {
 const isFigmaSolid = (paint: FigmaPaint): paint is SolidPaint => {
   return paint.type === FigmaPaintType.Solid;
 };
-/**
- * Describes a Figma effect type retrieved from the Figma API.
- * @ignore
- */
-const enum FigmaEffectType {
-  DropShadow = "DROP_SHADOW",
-}
-
-type FigmaEffect = ShadowEffect | { type: unknown };
-
-const isFigmaDropShadow = (effect: Effect): effect is ShadowEffect => {
-  return effect.type === FigmaEffectType.DropShadow;
-};
 
 // This shows the HTML page in "ui.html".
 figma.showUI(__html__);
@@ -82,7 +69,7 @@ figma.ui.onmessage = async (msg) => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
   if (msg.type === "generate") {
-    let theme;
+    let theme: { text: { [x: string]: any; }; fonts: { [x: string]: any; }; colors: any; };
     try {
       theme = JSON.parse(msg.theme);
     } catch (e) {
@@ -120,7 +107,7 @@ figma.ui.onmessage = async (msg) => {
 
     const localColorStyles = figma.getLocalPaintStyles();
 
-    function createFigmaColorStyle(themeObject) {
+    function createFigmaColorStyle(themeObject: { [x: string]: any; }) {
       Object.keys(themeObject)?.map((name) => {
         const themeColor = themeObject[name];
 
@@ -139,7 +126,11 @@ figma.ui.onmessage = async (msg) => {
           const colorStyle: PaintStyle = localStyle || figma.createPaintStyle();
           colorStyle.name = name;
 
-          const convertedColor = Color(themeColor).toRgb();
+          const oColor = TinyColor(themeColor);
+          if (!oColor.isValid()) {
+            throw new Error('invalid color' + oColor.getOriginalInput())
+          }
+          const convertedColor = oColor.toRgb()
           const { r, g, b, a } = convertedColor;
           const color: RGB = {
             r: r / 255,
@@ -162,6 +153,7 @@ figma.ui.onmessage = async (msg) => {
       createFigmaColorStyle(theme.colors);
     }
   }
+
   if (msg.type === "copy") {
     // Input flags to change parsing
     // e.g. we can change color from RGB to HEX
@@ -192,12 +184,12 @@ figma.ui.onmessage = async (msg) => {
       }, {});
 
     // Grab index of font size
-    function getFontSize(fontSize) {
-      let fontIndex;
+    function getFontSize(fontSize: number) {
+      let fontIndex: string | number;
       fontSizes.filter((fontSizeValue, index) => {
         if (fontSizeValue === fontSize) fontIndex = index;
       });
-      return parseInt(fontIndex);
+      return parseInt(fontIndex as string);
     }
 
     // Parse text variants
@@ -234,13 +226,13 @@ figma.ui.onmessage = async (msg) => {
     let finalColors = {};
 
     // Loop through colors and convert Figma API to theme/CSS format
-    colors.map(({ paints, type, remote, name }) => {
+    colors.map(({ paints, name }) => {
       // Parse name from Figma slash `/` to object `.`
       let filteredName = name;
       if (flagLowercaseNames) filteredName = filteredName.toLowerCase();
       const colorArray = filteredName.split("/");
 
-      const colorNameReducer = (accumulator, currentValue, index) => {
+      const colorNameReducer = (accumulator: object, currentValue: string, index: number) => {
         if (index == colorArray.length) {
           return walkObject(accumulator, "");
         }
@@ -263,16 +255,16 @@ figma.ui.onmessage = async (msg) => {
           // Convert optionally to other values
           switch (flagColorType) {
             case "hex":
-              newColor = Color(newColor).toHexString();
+              newColor = TinyColor(newColor).toHexString();
               break;
             case "rgba":
-              newColor = Color(newColor).toRgbString();
+              newColor = TinyColor(newColor).toRgbString();
               break;
             case "hsl":
-              newColor = Color(newColor).toHslString();
+              newColor = TinyColor(newColor).toHslString();
               break;
             default:
-              newColor = Color(newColor).toHexString();
+              newColor = TinyColor(newColor).toHexString();
               break;
           }
           // Add to last nested object parameter
