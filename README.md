@@ -1,4 +1,7 @@
 # Styled Theme Generator
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Figma plugin that generates a CSS in JS theme from your document's text and color styles, or lets you import a theme to generate Figma styles.
 
@@ -76,3 +79,22 @@ https://www.figma.com/plugin-docs/setup/
 - [Diez CLI](https://github.com/diez/diez/blob/7c224a3cb8d66262191da3aef12a1a4144bc39bc/src/extractors/extractors/src/extractors/figma.ts)
 - [Figma Plugin DS](https://github.com/thomas-lowry/figma-plugin-ds) by @thomas-lowry
 - [deepmerge](https://github.com/TehShrike/deepmerge)
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://www.linkedin.com/in/max-coplan-136a9a6b/"><img src="https://avatars3.githubusercontent.com/u/5297725?v=4" width="100px;" alt=""/><br /><sub><b>Max Coplan</b></sub></a><br /><a href="https://github.com/whoisryosuke/styled-theme-generator/commits?author=vegerot" title="Code">💻</a> <a href="https://github.com/whoisryosuke/styled-theme-generator/issues?q=author%3Avegerot" title="Bug reports">🐛</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
