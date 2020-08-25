@@ -142,9 +142,9 @@ figma.ui.onmessage = async (msg) => {
           const convertedColor = Color(themeColor).toRgb();
           const { r, g, b, a } = convertedColor;
           const color: RGB = {
-            r: Math.round(r / 255),
-            g: Math.round(g / 255),
-            b: Math.round(b / 255),
+            r: r / 255,
+            g: g / 255,
+            b: b / 255,
           };
 
           const paintStyle: SolidPaint = {
