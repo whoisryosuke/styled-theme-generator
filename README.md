@@ -12,17 +12,58 @@ This plugin can **generate Figma styles** from a CSS in JS theme file. It makes 
 
 ## Development
 
-This project uses Typescript and VSCode's built-in "watch" mode that compiles Typescript files according to the `tsconfig.json`.
-
-> If you're not using VSCode, you will have to run the Typescript build command on watch mode manually.
+This project uses Webpack to compile the Typescript files into JavaScript files, as well as copy over any other files (like HTML).
 
 ### Getting Started
 
 1. Install dependencies: `yarn` or `npm i`
-2. In VSCode with the project folder open, press `SHIFT + CMD + B` (or `Control` instead of `CMD` for Windows) and run the `tsc: watch` command from the `tsconfig.json` file.
+2. Run `yarn start` to start Webpack in "watch" mode.
 3. Open Figma and import the plugin's `manifest.json` file.
 
 To run the plugin, go to the Figma desktop app and find the plugin in the top menu (Plugins > Development > styled-theme-generator).
+
+Any time you make changes: make sure Webpack has built new `/dist` files, close the plugin window, and run the plugin again in Figma (Run Last Plugin or run plugin directly).
+
+## Generating Styles
+
+1. Make sure you have text or color styles available in your file.
+1. Run the plugin.
+1. Click the Generate button.
+
+The JSON will be copied to your clipboard, but you can manually copy it from the textbox inside the plugin window.
+
+### Importing Styles
+
+You can import any text or color styles that are structured appropriately in JSON. Here is an example of the structure:
+
+```json
+{
+  "text": {
+    "header.h1": {
+      "name": "Header/H1",
+      "fontFamily": "roboto",
+      "fontWeight": "Bold",
+      "fontSize": 11,
+      "letterSpacing": {
+        "unit": "PERCENT",
+        "value": 0
+      },
+      "lineHeight": {
+        "unit": "PERCENT",
+        "value": 129.99999523162842
+      },
+      "textCase": "ORIGINAL",
+      "textDecoration": "NONE"
+    }
+  },
+  "colors": {
+    "Light Blue": "#e6f7ff",
+    "Blue": "#bae7ff"
+  }
+}
+```
+
+> The colors object supports deep nested values, allowing you to create "grouped" color styles like `Blue/500`. The color object would look like: `colors: { "Blue" : { "500": "#e6f7ff" } }`.
 
 ### Figma Guide
 
